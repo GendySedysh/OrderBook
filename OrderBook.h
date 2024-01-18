@@ -1,5 +1,6 @@
 #pragma once
 
+#include "LogDuration.h"
 #include <iostream>
 #include <map>
 #include <vector>
@@ -114,107 +115,231 @@ class BookTester
 {
 public:
 	void TestAddBook() {
-		OrderBook book;
-		book.AddBook(Book{ 1, 100, 23, BookType::BUY });
-		book.AddBook(Book{ 2, 200, 63, BookType::BUY });
-		book.AddBook(Book{ 3, 150, 55, BookType::SELL });
+		{
+			LogDuration test("Add test 1");
+			OrderBook book;
+			book.AddBook(Book{ 1, 100, 23, BookType::BUY });
+		}
 
-		std::map<int, int> tmp_map = { { -150, 55 }, { 100, 23 }, { 200, 63 } };
-		assert(book.GetPriceMap() == tmp_map);
+		{
+			LogDuration test("Add test 1000");
+			OrderBook book;
+			for (unsigned int i = 0; i < 1000; i++) {
+				book.AddBook(Book{ i, 100, 23, BookType::BUY });
+			}
+		}
 
-		book.AddBook(Book{ 4, 150, 5, BookType::SELL });
-		book.AddBook(Book{ 5, 150, 47, BookType::BUY });
+		{
+			LogDuration test("Add test 1000000");
+			OrderBook book;
+			for (unsigned int i = 0; i < 1000000; i++) {
+				book.AddBook(Book{ i, 100, 23, BookType::BUY });
+			}
+		}
 
-		tmp_map = { { -150, 60 }, { 100, 23 }, { 150, 47 }, { 200, 63 } };
-		assert(book.GetPriceMap() == tmp_map);
+		{
+			OrderBook book;
+			book.AddBook(Book{ 1, 100, 23, BookType::BUY });
+			book.AddBook(Book{ 2, 200, 63, BookType::BUY });
+			book.AddBook(Book{ 3, 150, 55, BookType::SELL });
 
-		book.AddBook(Book{ 6, 100, 23, BookType::BUY });
-		book.AddBook(Book{ 7, 100, 27, BookType::BUY });
-		book.AddBook(Book{ 8, 100, 30, BookType::BUY });
+			std::map<int, int> tmp_map = { { -150, 55 }, { 100, 23 }, { 200, 63 } };
+			assert(book.GetPriceMap() == tmp_map);
 
-		tmp_map = { { -150, 60 }, { 100, 103 }, { 150, 47 }, { 200, 63 } };
-		assert(book.GetPriceMap() == tmp_map);
+			book.AddBook(Book{ 4, 150, 5, BookType::SELL });
+			book.AddBook(Book{ 5, 150, 47, BookType::BUY });
+
+			tmp_map = { { -150, 60 }, { 100, 23 }, { 150, 47 }, { 200, 63 } };
+			assert(book.GetPriceMap() == tmp_map);
+
+			book.AddBook(Book{ 6, 100, 23, BookType::BUY });
+			book.AddBook(Book{ 7, 100, 27, BookType::BUY });
+			book.AddBook(Book{ 8, 100, 30, BookType::BUY });
+
+			tmp_map = { { -150, 60 }, { 100, 103 }, { 150, 47 }, { 200, 63 } };
+			assert(book.GetPriceMap() == tmp_map);
+		}
 	}
 
 	void TestDeleteBook() {
-		OrderBook book;
-		book.AddBook(Book{ 1, 100, 23, BookType::BUY });
-		book.AddBook(Book{ 2, 200, 63, BookType::BUY });
-		book.AddBook(Book{ 3, 150, 55, BookType::SELL });
+		{
+			OrderBook book;
+			book.AddBook(Book{ 1, 100, 23, BookType::BUY });
+			{
+				LogDuration test("Delete test 1");
+				book.DeleteBook(1);
+			}
+		}
 
-		std::map<int, int> tmp_map = { { -150, 55 }, { 100, 23 }, { 200, 63 } };
-		assert(book.GetPriceMap() == tmp_map);
+		{
+			OrderBook book;
+			for (unsigned int i = 0; i < 1000; i++) {
+				book.AddBook(Book{ i, 100, 23, BookType::BUY });
+			}
 
-		book.DeleteBook(2);
+			{
+				LogDuration test("Delete test 1000");
+				for (unsigned int i = 0; i < 1000; i++) {
+					book.DeleteBook(i);
+				}
+			}
+		}
 
-		tmp_map = { { -150, 55 }, { 100, 23 } };
-		assert(book.GetPriceMap() == tmp_map);
+		{
+			OrderBook book;
+			for (unsigned int i = 0; i < 1000000; i++) {
+				book.AddBook(Book{ i, 100, 23, BookType::BUY });
+			}
+			{
+				LogDuration test("Delete test 1000000");
+				for (unsigned int i = 0; i < 1000000; i++) {
+					book.DeleteBook(i);
+				}
+			}
+		}
 
-		book.AddBook(Book{ 6, 100, 23, BookType::BUY });
-		book.AddBook(Book{ 7, 100, 27, BookType::BUY });
-		book.AddBook(Book{ 8, 100, 30, BookType::BUY });
+		{
+			OrderBook book;
+			book.AddBook(Book{ 1, 100, 23, BookType::BUY });
+			book.AddBook(Book{ 2, 200, 63, BookType::BUY });
+			book.AddBook(Book{ 3, 150, 55, BookType::SELL });
 
-		tmp_map = { { -150, 55 }, { 100, 103 } };
-		assert(book.GetPriceMap() == tmp_map);
+			std::map<int, int> tmp_map = { { -150, 55 }, { 100, 23 }, { 200, 63 } };
+			assert(book.GetPriceMap() == tmp_map);
 
-		book.DeleteBook(8);
-		book.DeleteBook(8);
-		book.DeleteBook(6);
+			book.DeleteBook(2);
 
-		tmp_map = { { -150, 55 }, { 100, 50 } };
-		assert(book.GetPriceMap() == tmp_map);
+			tmp_map = { { -150, 55 }, { 100, 23 } };
+			assert(book.GetPriceMap() == tmp_map);
+
+			book.AddBook(Book{ 6, 100, 23, BookType::BUY });
+			book.AddBook(Book{ 7, 100, 27, BookType::BUY });
+			book.AddBook(Book{ 8, 100, 30, BookType::BUY });
+
+			tmp_map = { { -150, 55 }, { 100, 103 } };
+			assert(book.GetPriceMap() == tmp_map);
+
+			book.DeleteBook(8);
+			book.DeleteBook(8);
+			book.DeleteBook(6);
+
+			tmp_map = { { -150, 55 }, { 100, 50 } };
+			assert(book.GetPriceMap() == tmp_map);
+		}
 	}
 
 	void TestChangeBook() {
-		OrderBook book;
-		book.AddBook(Book{ 1, 100, 23, BookType::BUY });
 
-		std::map<int, int> tmp_map = { { 100, 23 } };
-		assert(book.GetPriceMap() == tmp_map);
+		{
+			OrderBook book;
+			book.AddBook(Book{ 1, 100, 23, BookType::BUY });
+			{
+				LogDuration test("Change test 1");
+				book.ChangeBook(1, 55, 63, BookType::SELL);
+			}
+		}
 
-		book.ChangeBook(1, 200, 54, BookType::BUY);
-		tmp_map = { { 200, 54 } };
-		assert(book.GetPriceMap() == tmp_map);
+		{
+			OrderBook book;
+			book.AddBook(Book{ 1, 100, 23, BookType::BUY });
+			{
+				LogDuration test("Change test 1000");
+				for (unsigned int i = 0; i < 1000; i++) {
+					book.ChangeBook(1, i, i, BookType::SELL);
+				}
+			}
+		}
 
-		book.ChangeBook(1, 200, 54, BookType::SELL);
-		tmp_map = { { -200, 54 } };
-		assert(book.GetPriceMap() == tmp_map);
+		{
+			OrderBook book;
+			book.AddBook(Book{ 1, 100, 23, BookType::BUY });
+			{
+				LogDuration test("Change test 1000000");
+				for (unsigned int i = 0; i < 1000000; i++) {
+					book.ChangeBook(1, i, i, BookType::SELL);
+				}
+			}
+		}
 
-		book.AddBook(Book{ 2, 200, 63, BookType::BUY });
-		book.AddBook(Book{ 3, 150, 55, BookType::SELL });
-		book.AddBook(Book{ 4, 200, 15, BookType::SELL });
-		tmp_map = { { -200, 69 }, { -150, 55 }, { 200, 63 } };
-		assert(book.GetPriceMap() == tmp_map);
+		{
+			OrderBook book;
+			book.AddBook(Book{ 1, 100, 23, BookType::BUY });
+
+			std::map<int, int> tmp_map = { { 100, 23 } };
+			assert(book.GetPriceMap() == tmp_map);
+
+			book.ChangeBook(1, 200, 54, BookType::BUY);
+			tmp_map = { { 200, 54 } };
+			assert(book.GetPriceMap() == tmp_map);
+
+			book.ChangeBook(1, 200, 54, BookType::SELL);
+			tmp_map = { { -200, 54 } };
+			assert(book.GetPriceMap() == tmp_map);
+
+			book.AddBook(Book{ 2, 200, 63, BookType::BUY });
+			book.AddBook(Book{ 3, 150, 55, BookType::SELL });
+			book.AddBook(Book{ 4, 200, 15, BookType::SELL });
+			tmp_map = { { -200, 69 }, { -150, 55 }, { 200, 63 } };
+			assert(book.GetPriceMap() == tmp_map);
+		}
 	}
 
 	void TestShowBook() {
-		OrderBook book;
-		book.AddBook(Book{ 1, 100, 23, BookType::BUY });
-		book.AddBook(Book{ 2, 200, 63, BookType::BUY });
-		book.AddBook(Book{ 3, 150, 55, BookType::SELL });
+		{
+			OrderBook book;
+			for (unsigned int i = 0; i < 1000000; i++) {
+				book.AddBook(Book{ i, 100, 23, BookType::BUY });
+			}
 
-		std::vector<int> tmp_prices = { 200, -150, 100 };
-		assert(book.GetBestPrices() == tmp_prices);
+			{
+				LogDuration test("GetBestPrices test 1");
+				book.GetBestPrices();
+			}
 
-		book.AddBook(Book{ 4, 1, 100, BookType::BUY });
-		book.AddBook(Book{ 5, 2, 100, BookType::BUY });
-		book.AddBook(Book{ 6, 3, 100, BookType::BUY });
-		book.AddBook(Book{ 7, 4, 100, BookType::BUY });
-		book.AddBook(Book{ 8, 5, 100, BookType::BUY });
-		book.AddBook(Book{ 9, 6, 100, BookType::BUY });
-		book.AddBook(Book{ 10, 7, 100, BookType::BUY });
-		book.AddBook(Book{ 11, 8, 100, BookType::BUY });
-		book.AddBook(Book{ 12, 9, 100, BookType::BUY });
+			{
+				LogDuration test("GetBestPrices test 1000");
+				for (unsigned int i = 0; i < 1000; i++) {
+					book.GetBestPrices();
+				}
+			}
 
-		tmp_prices = { 200, -150, 100, 9, 8, 7, 6, 5, 4, 3 };
-		assert(book.GetBestPrices() == tmp_prices);
+			{
+				LogDuration test("GetBestPrices test 1000000");
+				for (unsigned int i = 0; i < 1000000; i++) {
+					book.GetBestPrices();
+				}
+			}
+		}
 
-		book.AddBook(Book{ 13, 1, 100000, BookType::BUY });
-		book.AddBook(Book{ 14, 2, 65000, BookType::BUY });
-		book.AddBook(Book{ 15, 3, 55000, BookType::BUY });
+		{
+			OrderBook book;
+			book.AddBook(Book{ 1, 100, 23, BookType::BUY });
+			book.AddBook(Book{ 2, 200, 63, BookType::BUY });
+			book.AddBook(Book{ 3, 150, 55, BookType::SELL });
 
-		tmp_prices = { 3, 2, 1, 200, -150, 100, 9, 8, 7, 6 };
-		assert(book.GetBestPrices() == tmp_prices);
+			std::vector<int> tmp_prices = { 200, -150, 100 };
+			assert(book.GetBestPrices() == tmp_prices);
+
+			book.AddBook(Book{ 4, 1, 100, BookType::BUY });
+			book.AddBook(Book{ 5, 2, 100, BookType::BUY });
+			book.AddBook(Book{ 6, 3, 100, BookType::BUY });
+			book.AddBook(Book{ 7, 4, 100, BookType::BUY });
+			book.AddBook(Book{ 8, 5, 100, BookType::BUY });
+			book.AddBook(Book{ 9, 6, 100, BookType::BUY });
+			book.AddBook(Book{ 10, 7, 100, BookType::BUY });
+			book.AddBook(Book{ 11, 8, 100, BookType::BUY });
+			book.AddBook(Book{ 12, 9, 100, BookType::BUY });
+
+			tmp_prices = { 200, -150, 100, 9, 8, 7, 6, 5, 4, 3 };
+			assert(book.GetBestPrices() == tmp_prices);
+
+			book.AddBook(Book{ 13, 1, 100000, BookType::BUY });
+			book.AddBook(Book{ 14, 2, 65000, BookType::BUY });
+			book.AddBook(Book{ 15, 3, 55000, BookType::BUY });
+
+			tmp_prices = { 3, 2, 1, 200, -150, 100, 9, 8, 7, 6 };
+			assert(book.GetBestPrices() == tmp_prices);
+		}
 	}
 };
 
