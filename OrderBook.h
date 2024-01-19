@@ -2,7 +2,7 @@
 
 #include "LogDuration.h"
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <cassert>
 #include <algorithm>
@@ -23,8 +23,8 @@ struct Book
 class OrderBook
 {
 private:
-	std::map<int, Book> id_to_book_; // для изменений
-	std::map<int, int> price_to_volume_; // для вывода
+	std::unordered_map<int, Book> id_to_book_; // для изменений
+	std::unordered_map<int, int> price_to_volume_; // для вывода
 
 public:
 	OrderBook() {}
@@ -106,7 +106,7 @@ public:
 		return to_return;
 	}
 
-	std::map<int, int> GetPriceMap() const {
+	std::unordered_map<int, int> GetPriceMap() const {
 		return price_to_volume_;
 	}
 };
@@ -143,7 +143,7 @@ public:
 			book.AddBook(Book{ 2, 200, 63, BookType::BUY });
 			book.AddBook(Book{ 3, 150, 55, BookType::SELL });
 
-			std::map<int, int> tmp_map = { { -150, 55 }, { 100, 23 }, { 200, 63 } };
+			std::unordered_map<int, int> tmp_map = { { -150, 55 }, { 100, 23 }, { 200, 63 } };
 			assert(book.GetPriceMap() == tmp_map);
 
 			book.AddBook(Book{ 4, 150, 5, BookType::SELL });
@@ -204,7 +204,7 @@ public:
 			book.AddBook(Book{ 2, 200, 63, BookType::BUY });
 			book.AddBook(Book{ 3, 150, 55, BookType::SELL });
 
-			std::map<int, int> tmp_map = { { -150, 55 }, { 100, 23 }, { 200, 63 } };
+			std::unordered_map<int, int> tmp_map = { { -150, 55 }, { 100, 23 }, { 200, 63 } };
 			assert(book.GetPriceMap() == tmp_map);
 
 			book.DeleteBook(2);
@@ -265,7 +265,7 @@ public:
 			OrderBook book;
 			book.AddBook(Book{ 1, 100, 23, BookType::BUY });
 
-			std::map<int, int> tmp_map = { { 100, 23 } };
+			std::unordered_map<int, int> tmp_map = { { 100, 23 } };
 			assert(book.GetPriceMap() == tmp_map);
 
 			book.ChangeBook(1, 200, 54, BookType::BUY);
